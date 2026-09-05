@@ -15,7 +15,7 @@ st.set_page_config(page_title="My Custom AI Tool", page_icon="🤖")
 st.title("🤖 My Live AI Assistant")
 st.write("Ask your AI anything! Your cloud brain is now fully awake.")
 
-# Putting your key directly here so it ignores the Streamlit Secrets box!
+#gsk_egpVYuVM6mE6LUi7WtQmWGdyb3FYmdQgYiLw5dawcZn6aMFN8lx!
 YOUR_SECRET_KEY = "gsk_YOUR_KEY_HERE"  
 
 # Create the text input field
