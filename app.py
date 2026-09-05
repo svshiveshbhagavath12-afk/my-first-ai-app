@@ -13,11 +13,12 @@ st.set_page_config(page_title="My Custom AI Tool", page_icon="🤖")
 st.title("🤖 My Live AI Assistant")
 st.write("Ask your AI anything! Your cloud brain is now fully awake.")
 
-# Safe mode: Reads from Streamlit's hidden vault
-if "GROQ_API_KEY" in st.secrets:
-    YOUR_SECRET_KEY = st.secrets["GROQ_API_KEY"]
+# Grab the key directly from the browser web link
+query_params = st.query_params
+if "key" in query_params:
+    YOUR_SECRET_KEY = query_params["key"]
 else:
-    st.error("Please add your GROQ_API_KEY inside your Streamlit Secrets box!")
+    st.info("💡 To turn on the brain, add your key to the end of your browser link above like this: /?key=gsk_yourkey")
     st.stop()
 
 user_input = st.text_input("Ask your AI anything:", placeholder="Type your question here...")
