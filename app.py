@@ -13,33 +13,34 @@ from groq import Groq
 # Set up the web page layout
 st.set_page_config(page_title="My Custom AI Tool", page_icon="🤖")
 st.title("🤖 My Live AI Assistant")
-st.write("Welcome! Type a message below to chat with my live cloud application.")
+st.write("Welcome! Paste your Groq API key below to turn on the cloud brain.")
 
-# Read securely from the system environment variable we just created!
-YOUR_SECRET_KEY = os.environ.get("GROQ_API_KEY")
+# 1. Create a password input box directly on the screen
+user_key = st.text_input("Enter your Groq API Key (starts with gsk_):", type="password")
 
-if not YOUR_SECRET_KEY:
-    st.error("Missing system credentials. Please check the backend configuration vault.")
-    st.stop()
-
-# Create the main text box for chatting
-user_input = st.text_input("Ask my AI anything:", placeholder="Type your question here...")
+# 2. Create the main text box for chatting
+user_input = st.text_input("Ask your AI anything:", placeholder="Type your question here...")
 
 if st.button("Generate AI Response"):
-    if user_input:
+    if not user_key:
+        st.warning("⚠️ Please paste your Groq API key into the password box first!")
+    elif not user_input:
+        st.warning("⚠️ Please type a question or prompt first!")
+    else:
         with st.spinner("Thinking..."):
             try:
-                # Link to the AI using the secure background key
-                client = Groq(api_key=YOUR_SECRET_KEY)
+                # Fire up the AI using the key provided on screen
+                client = Groq(api_key=user_key.strip())
                 
+                # Using the fresh OpenAI/GPT-OSS model format
                 completion = client.chat.completions.create(
                     model="openai/gpt-oss-20b",
                     messages=[{"role": "user", "content": user_input}],
                 )
                 
-                # Safely read and display the text response layout
+                # Safe unpack strategy that handles all response layouts perfectly
                 if hasattr(completion, 'choices') and completion.choices:
-                    choice = completion.choices
+                    choice = completion.choices[0]
                     if hasattr(choice, 'message'):
                         answer = choice.message.content
                     elif isinstance(choice, dict) and 'message' in choice:
@@ -49,10 +50,9 @@ if st.button("Generate AI Response"):
                 else:
                     answer = str(completion)
                 
+                # Display the successful answer
                 st.success("AI Response:")
                 st.write(answer)
                 
             except Exception as e:
                 st.error(f"❌ Connection failed: {e}")
-    else:
-        st.warning("⚠️ Please type a question or prompt first!")
