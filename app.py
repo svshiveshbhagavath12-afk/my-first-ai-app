@@ -32,7 +32,8 @@ if st.button("Generate AI Response"):
                 # Fire up the AI using the exact key you typed on screen
                 client = Groq(api_key=user_key.strip())
                 completion = client.chat.completions.create(
-                    model="llama3-8b-8192",
+                    model="openai/gpt-oss-20b",
+
                     messages=[{"role": "user", "content": user_input}],
                 )
                 # Display the successful answer
