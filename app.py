@@ -29,16 +29,30 @@ if st.button("Generate AI Response"):
     else:
         with st.spinner("Thinking..."):
             try:
-                # Fire up the AI using the exact key you typed on screen
+                # Fire up the AI using the key provided on screen
                 client = Groq(api_key=user_key.strip())
+                
+                # Using the fresh OpenAI/GPT-OSS model format
                 completion = client.chat.completions.create(
                     model="openai/gpt-oss-20b",
-
                     messages=[{"role": "user", "content": user_input}],
                 )
+                
+                # Safe unpack strategy that handles all response layouts perfectly
+                if hasattr(completion, 'choices') and completion.choices:
+                    choice = completion.choices[0]
+                    if hasattr(choice, 'message'):
+                        answer = choice.message.content
+                    elif isinstance(choice, dict) and 'message' in choice:
+                        answer = choice['message']['content']
+                    else:
+                        answer = str(choice)
+                else:
+                    answer = str(completion)
+                
                 # Display the successful answer
                 st.success("AI Response:")
-                st.write(completion.choices.message.content)
+                st.write(answer)
+                
             except Exception as e:
                 st.error(f"❌ Connection failed: {e}")
-
